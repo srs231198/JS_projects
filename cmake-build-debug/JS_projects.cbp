@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="JS_projects"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="JS_projects">
+				<Option output="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug/JS_projects" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 JS_projects"/>
+					<CompileFile command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="JS_projects/fast">
+				<Option output="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug/JS_projects" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 JS_projects/fast"/>
+					<CompileFile command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/Users/shreyas/Desktop/anaconda3/bin/make -j4 -f &quot;/Users/shreyas/Desktop/Home\ directory/CLionProjects/JS_projects/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/main.cpp">
+			<Option target="JS_projects"/>
+		</Unit>
+		<Unit filename="/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

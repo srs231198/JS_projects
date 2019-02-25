@@ -1,0 +1,3 @@
+/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/shreyas/Desktop/Home directory/CLionProjects/JS_projects/cmake-build-debug/CMakeFiles/JS_projects.dir
