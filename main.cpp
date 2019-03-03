@@ -23,6 +23,9 @@ void menu(double *, int );
 //a function to switch rows
 void switchRows(double *, int );
 
+//a function to multiply a row with the given multiplier
+void multiplier(double *, int);
+
 int main(){
 
     fstream inputfile;
@@ -31,7 +34,7 @@ int main(){
     int num_equations = 0;
     num_equations = numOfPlayers(inputfile);
     //check for number of players
-    if(num_equations > 4){
+    if(num_equations > 4 || num_equations < 2){
         cout << "Only 2-4 players allowed" << endl;
         exit(0);
     }
@@ -84,34 +87,47 @@ int numOfPlayers(fstream &inputfile){
 //in matrix[][]
 
 void FileInput(double *matrix, fstream &inputfile, int numEQ) {
-    int var = 0, sign = 1;
+    int var = 0, sign = 1, counter = 0;
     char ch;
     double *ptm;
     ptm = matrix;
 
+    bool valid, until = false;
+
     inputfile.open("commands.txt", ios::in);
-    int t = (int) inputfile.tellp();
 
-    for(int i = 0; i < numEQ ; i++) {
 
-        int col = 4;
+    while(!until) {
 
-        //move pointer to the next set of positions
-        if(i != 0)
-            ptm += 4;
-
+        valid = false;
+        until = false;
+        var = 1;
         //while there are less than 4 cols
         //the loop will also terminate if we reach a newline or constant
-        for(int j = 0 ; j < col-1; j++) {
+        while(!valid){
             //check for the character pointed at by the file pointer
             // and store it in c
             int c = inputfile.peek();
 
+            if(c == 10){
+                inputfile.seekg(1,ios :: cur);
+                break;
+            }
+
+            //check for operator
+            c = inputfile.peek();
+            if (c == 45) {
+                inputfile.seekg(1, ios::cur);
+                sign = -1;
+            } else if( c == 43) {
+                inputfile.seekg(1, ios::cur);
+                sign = 1;
+            }
+
+            c = inputfile.peek();
             //check if the val is a digit
             if (isdigit(c)) {
                 inputfile >> var;
-            } else {
-                var = 1;
             }
 
             //check for character
@@ -124,44 +140,41 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
                 if (c == 120) {
                     *ptm = var * sign;
                     cout << *ptm << " ";
+
                 }
-                    //check for y
+                //check for y
                 else if (c == 121) {
                     ptm++;
                     *ptm = var * sign;
                     cout << *ptm << " ";
                     ptm--;
                 }
-                    //check for z
+                //check for z
                 else if (c == 122) {
                     ptm += 2;
                     *ptm = var * sign;
                     cout << *ptm << " ";
                     ptm -= 2;
-                    break;
+                    valid = true;
                 }
             }
 
-            //check for operator
-            c = inputfile.peek();
-            if (c == 45) {
-                inputfile.seekp(1, ios::cur);
-                sign = -1;
-            } else {
-                inputfile.seekp(1, ios::cur);
-                sign = 1;
-            }
         }
 
         //check for "=" sign
-        int  c = inputfile.peek();
+        int c = inputfile.peek();
         if(c == 61){
-            inputfile.seekp(1, ios :: cur);
+            inputfile.seekg(1, ios :: cur);
             inputfile >> var;
             ptm += 3;
             *ptm = var;
             cout << *ptm << endl;
-            ptm -= 3;
+            ptm += 1;
+            counter++;
+            if(counter == numEQ){
+                until = true;
+            }
+
         }
 
     }
@@ -173,43 +186,115 @@ void displayMatrix(double *matrix, int numEQ){
     double *ptm;
     ptm = matrix;
     int counter = 0;
+    cout << endl;
+
+    //loop till the end of the array
     for(int i = 0; i < length; i++){
         cout << *ptm << " ";
         ptm++;
         counter++;
+        //when 4 values are outputted then print a newline
         if(counter == 4){
             counter = 0;
             cout << endl;
         }
     }
+    cout << endl;
 }
 
 void menu( double *matrix, int numEQ){
 
     double *ptm ;
-    int choice;
+    int choice = 0;
     ptm = matrix;
 
+    //while choice is not quit aka 4
     while(choice != 4) {
+        //display the matix to the user
         displayMatrix(matrix, numEQ);
+
+        //present the user with choices
         cout << "Please choose an option\n"
                 "o 1 – Switch two rows\n"
                 "o 2 – Multiply row by non-zero number\n"
                 "o 3 – Add scalar multiple of one row to another row\n"
                 "o 4 – Quit\n";
+        //get the choice
         cin >> choice;
+
 
         switch (choice) {
             case 1 :
                 switchRows(matrix, numEQ);
+                break;
+            case 2 :
+                multiplier(matrix, numEQ);
+                break;
             case 4 :
                 cout << "Program terminating" << endl;
+                break;
+            default:
+                cout << "enter a number between 1 and 4 corresponding to the assigned action" << endl;
         }
     }
+    //display the updated matrix to the user
     displayMatrix(matrix, numEQ);
 
 }
 
 void switchRows(double *matrix, int numEQ){
 
+    int row1, row2;
+    double temp;
+    double *ptm1;
+    double *ptm2;
+    ptm1 = matrix;
+    ptm2 = matrix;
+
+    //ask the user for the rows they want to switch
+    cout << "Enter the rows that you want to switch: " << endl;
+    cin >> row1 >> row2;
+
+    //check for the same row
+    if(row1 == row2){
+        cout << "can't switch the same rows" << endl;
+        return;
+    }
+
+    //check that the input is between 1 and 4 for both rows
+    if((row1 <= numEQ && row1 > 0) && (row2 <= numEQ && row2 > 0)){
+
+        row1--, row2--;
+        //set the position of position counter
+        if(row1 > row2){
+            ptm2 += row1*4;
+            ptm1 += row2*4;
+        }
+        else{
+            ptm2 += row2*4;
+            ptm1 += row1*4;
+        }
+
+        //switch the rows
+        for (int i = 0; i < 4; i++, ptm1++, ptm2++){
+            temp = *ptm1;
+            *ptm1 = *ptm2;
+            *ptm2 = temp;
+        }
+    }
+    else{
+        cout << "the entry must be between 1 and 4!!" << endl;
+    }
+}
+
+void multiplier(double *matrix, int numEQ){
+    double multiplier = 0;
+
+    cout << "Enter the value you want to multiply the row with :" << endl;
+    cin >> multiplier;
+
+    if(multiplier < 0){
+        cout << "the multiplier needs to be a non-zero value" << endl;
+        endl;
+    }
 }
