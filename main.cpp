@@ -3,16 +3,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
 
+//a function to count the number of players;
+int numOfPlayers(fstream &);
 
 //a function to get the input from matrix.txt
 void FileInput(double *, fstream &, int );
-
-//a function to count the number of players;
-int numOfPlayers(fstream &);
 
 //a function to display the matrix
 void displayMatrix(double *, int numEQ);
@@ -25,6 +25,9 @@ void switchRows(double *, int );
 
 //a function to multiply a row with the given multiplier
 void multiplier(double *, int);
+
+//a function to add the scalar multiple of a row to another
+void scalarAddition(double *, int);
 
 int main(){
 
@@ -76,15 +79,6 @@ int numOfPlayers(fstream &inputfile){
     inputfile.close();
     return playerCount;
 }
-
-
-//Funtion below will open the file given and parse through the equation in the file
-//the equations in the file will be stored as an augmented matrix in matrix[][]
-//eg- 3x + 4y + 5z = 12
-//     x +  y +  z = 11
-// will be stored as [(3, 4, 5, 12),
-//                    (1 , 1, 1, 11)]
-//in matrix[][]
 
 void FileInput(double *matrix, fstream &inputfile, int numEQ) {
     int var = 0, sign = 1, counter = 0;
@@ -155,24 +149,24 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
                     *ptm = var * sign;
                     cout << *ptm << " ";
                     ptm -= 2;
-                    valid = true;
                 }
             }
 
-        }
+            //check for "=" sign
+            c = inputfile.peek();
+            if(c == 61){
+                inputfile.seekg(1, ios :: cur);
+                inputfile >> var;
+                ptm += 3;
+                *ptm = var;
+                cout << *ptm << endl;
+                ptm += 1;
+                counter++;
+                if(counter == numEQ){
+                    until = true;
+                    valid = true;
+                }
 
-        //check for "=" sign
-        int c = inputfile.peek();
-        if(c == 61){
-            inputfile.seekg(1, ios :: cur);
-            inputfile >> var;
-            ptm += 3;
-            *ptm = var;
-            cout << *ptm << endl;
-            ptm += 1;
-            counter++;
-            if(counter == numEQ){
-                until = true;
             }
 
         }
@@ -190,7 +184,7 @@ void displayMatrix(double *matrix, int numEQ){
 
     //loop till the end of the array
     for(int i = 0; i < length; i++){
-        cout << *ptm << " ";
+        cout << setw(2) << *ptm << " ";
         ptm++;
         counter++;
         //when 4 values are outputted then print a newline
@@ -222,13 +216,16 @@ void menu( double *matrix, int numEQ){
         //get the choice
         cin >> choice;
 
-
+        //call appropriate functions based on the user's input
         switch (choice) {
             case 1 :
                 switchRows(matrix, numEQ);
                 break;
             case 2 :
                 multiplier(matrix, numEQ);
+                break;
+            case 3 :
+                scalarAddition(matrix, numEQ);
                 break;
             case 4 :
                 cout << "Program terminating" << endl;
@@ -244,7 +241,7 @@ void menu( double *matrix, int numEQ){
 
 void switchRows(double *matrix, int numEQ){
 
-    int row1, row2;
+    int row1 = 0, row2 = 0;
     double temp;
     double *ptm1;
     double *ptm2;
@@ -255,14 +252,9 @@ void switchRows(double *matrix, int numEQ){
     cout << "Enter the rows that you want to switch: " << endl;
     cin >> row1 >> row2;
 
-    //check for the same row
-    if(row1 == row2){
-        cout << "can't switch the same rows" << endl;
-        return;
-    }
-
     //check that the input is between 1 and 4 for both rows
     if((row1 <= numEQ && row1 > 0) && (row2 <= numEQ && row2 > 0)){
+
 
         row1--, row2--;
         //set the position of position counter
@@ -283,18 +275,118 @@ void switchRows(double *matrix, int numEQ){
         }
     }
     else{
-        cout << "the entry must be between 1 and 4!!" << endl;
+        cout << "The row input must be between " << "1 and " << numEQ << endl;
     }
 }
 
 void multiplier(double *matrix, int numEQ){
     double multiplier = 0;
+    int row;
 
-    cout << "Enter the value you want to multiply the row with :" << endl;
-    cin >> multiplier;
+    double *ptm;
+    ptm = matrix;
 
-    if(multiplier < 0){
-        cout << "the multiplier needs to be a non-zero value" << endl;
-        endl;
+    //get the value of the row to be multiplied
+    cout << "Enter the row you want multiplied" << endl;
+    cin >> row;
+
+    if(row <= numEQ && row > 0) {
+
+        //get the value of the multiplier
+        cout << "Enter the value you want to multiply the row with :" << endl;
+        cin >> multiplier;
+
+        //check for non-zero values
+        if (multiplier == 0) {
+            cout << "the multiplier needs to be a non-zero value" << endl;
+            return;
+        }
+
+        //make the row into a compatible type
+        row--;
+
+        //set the position of the pointer
+        ptm += row*4;
+
+        //multiply the multiplier to the given row
+        for (int i = 0; i < 4; i++, ptm++){
+            //if the pointer is non zero let the
+            if(*ptm == 0){
+                continue;
+            }
+            *ptm *= multiplier;
+        }
+
     }
+    else{
+        cout << "The row input must be between " << "1 and " << numEQ << endl;
+    }
+}
+
+void scalarAddition(double *matrix, int numEQ){
+    double multiplier = 0;
+    int row, row1;
+
+    double *ptm;
+    ptm = matrix;
+
+    double *ptm1;
+    ptm1 = matrix;
+
+    //get the value of the row to be multiplied
+    cout << "Enter the row you want multiplied" << endl;
+    cin >> row;
+
+    if(row <= numEQ && row > 0) {
+
+        //get the value of the multiplier
+        cout << "Enter the value you want to multiply the row with :" << endl;
+        cin >> multiplier;
+
+        //check for non-zero values
+        if (multiplier == 0) {
+            cout << "the multiplier needs to be a non-zero value" << endl;
+            return;
+        }
+
+        //make the row into a compatible type
+        row--;
+
+        //set the position of the pointer
+        ptm += row*4;
+
+        //multiply the multiplier to the given row
+        for (int i = 0; i < 4; i++, ptm++){
+            //if the pointer is non zero let the
+            if(*ptm == 0){
+                continue;
+            }
+            *ptm *= multiplier;
+        }
+        ptm -= 4;
+    }
+    else{
+        cout << "The row input must be between " << "1 and " << numEQ << endl;
+    }
+
+    cout << "Enter the row you want to be added by the multiplied row" << endl;
+    cin >> row1;
+
+    //add the rows together
+    if(row1 <= numEQ && row1 > 0){
+        row1--;
+
+        //set the position of the pointer
+        ptm1 += row1*4;
+
+        for(int i = 0; i < 4; i++, ptm++, ptm1++){
+            *ptm1 += *ptm;
+        }
+    }
+    else{
+        cout << "The row input must be between " << "1 and " << numEQ << endl;
+    }
+
+
+
 }
