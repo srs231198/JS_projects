@@ -8,8 +8,8 @@
 using namespace std;
 
 
-//a function to count the number of players;
-int numOfPlayers(fstream &);
+//a function to count the number of equations;
+int numOfEquations(fstream &);
 
 //a function to get the input from matrix.txt
 void FileInput(double *, fstream &, int );
@@ -29,13 +29,16 @@ void multiplier(double *, int);
 //a function to add the scalar multiple of a row to another
 void scalarAddition(double *, int);
 
+//a function to check for the reduced echelon form
+bool MatrixComplete(double *, int);
+
 int main(){
 
     fstream inputfile;
     double *matrix;
 
     int num_equations = 0;
-    num_equations = numOfPlayers(inputfile);
+    num_equations = numOfEquations(inputfile);
     //check for number of players
     if(num_equations > 4 || num_equations < 2){
         cout << "Only 2-4 players allowed" << endl;
@@ -61,7 +64,7 @@ int main(){
 }
 
 
-int numOfPlayers(fstream &inputfile){
+int numOfEquations(fstream &inputfile){
     string player;
     int playerCount = 0;
     inputfile.open("commands.txt", ios :: in);
@@ -81,14 +84,15 @@ int numOfPlayers(fstream &inputfile){
 }
 
 void FileInput(double *matrix, fstream &inputfile, int numEQ) {
-    int var = 0, sign = 1, counter = 0;
+    int sign = 1, counter = 0;
+    double var = 0;
     char ch;
     double *ptm;
     ptm = matrix;
 
     bool valid, until = false;
 
-    inputfile.open("commands.txt", ios::in);
+    inputfile.open("commands.txt", ios::in | ios :: binary);
 
 
     while(!until) {
@@ -99,23 +103,18 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
         //while there are less than 4 cols
         //the loop will also terminate if we reach a newline or constant
         while(!valid){
+
+
+
             //check for the character pointed at by the file pointer
             // and store it in c
             int c = inputfile.peek();
 
+           // cout << " hello " << endl;
+            //check for newline
             if(c == 10){
                 inputfile.seekg(1,ios :: cur);
                 break;
-            }
-
-            //check for operator
-            c = inputfile.peek();
-            if (c == 45) {
-                inputfile.seekg(1, ios::cur);
-                sign = -1;
-            } else if( c == 43) {
-                inputfile.seekg(1, ios::cur);
-                sign = 1;
             }
 
             c = inputfile.peek();
@@ -123,6 +122,38 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
             if (isdigit(c)) {
                 inputfile >> var;
             }
+            else{
+                var = 1;
+            }
+
+            //check for operator
+            c = inputfile.peek();
+            //"-" operator
+            if (c == 45) {
+                inputfile.seekg(1, ios::cur);
+                sign = -1;
+            }
+            //"+" operator
+            else if( c == 43) {
+                inputfile.seekg(1, ios::cur);
+                sign = 1;
+            }
+//            //"." operator
+//            else if( c == 46 ){
+//                inputfile.seekg(1, ios::cur);
+//                int ct = 1;
+//                c = inputfile.peek();
+//                //store the double value i.e. 2.34 or something like that
+//                while(isdigit(c)){
+//                    int temp = var;
+//                    inputfile >> var;
+//                    var /= 10*ct;
+//                    ct++;
+//                    var += temp;
+//                }
+//            }
+
+
 
             //check for character
             c = inputfile.peek();
@@ -204,6 +235,13 @@ void menu( double *matrix, int numEQ){
 
     //while choice is not quit aka 4
     while(choice != 4) {
+
+        //check if the matrix is complete or not
+        if(MatrixComplete(matrix, numEQ)){
+            cout << "The matrix is in reduced echelon form" << endl;
+            break;
+        }
+
         //display the matix to the user
         displayMatrix(matrix, numEQ);
 
@@ -275,6 +313,7 @@ void switchRows(double *matrix, int numEQ){
         }
     }
     else{
+        //error message to warn user of invalid input
         cout << "The row input must be between " << "1 and " << numEQ << endl;
     }
 }
@@ -319,6 +358,7 @@ void multiplier(double *matrix, int numEQ){
 
     }
     else{
+        //error message to warn user of invalid input
         cout << "The row input must be between " << "1 and " << numEQ << endl;
     }
 }
@@ -355,38 +395,80 @@ void scalarAddition(double *matrix, int numEQ){
         //set the position of the pointer
         ptm += row*4;
 
-        //multiply the multiplier to the given row
-        for (int i = 0; i < 4; i++, ptm++){
-            //if the pointer is non zero let the
+        cout << "Enter the row you want to be added by the multiplied row" << endl;
+        cin >> row1;
+
+        //add the rows together
+        if(row1 <= numEQ && row1 > 0){
+            row1--;
+
+            //set the position of the pointer
+            ptm1 += row1*4;
+
+            for(int i = 0; i < 4; i++, ptm++, ptm1++){
+
+                if(*ptm == 0){
+                    continue;
+                }
+                *ptm *= multiplier;
+                *ptm1 += *ptm;
+                *ptm /= multiplier;
+
+            }
+        }
+        else{
+            //error message to warn user of invalid input
+            cout << "The row input must be between " << "1 and " << numEQ << endl;
+        }
+
+
+    }
+    else{
+        //error message to warn user of invalid input
+        cout << "The row input must be between " << "1 and " << numEQ << endl;
+    }
+
+}
+
+bool MatrixComplete(double *matrix, int NumEQ){
+    bool valid = false;
+
+    bool first = true;
+
+    double *ptm;
+    ptm = matrix;
+
+    int row = 0, col = 0;
+
+    //check for row echelon form
+
+    //check each row...
+    for(int i = 0; i < NumEQ; i++, ptm++){
+
+        if(row == NumEQ){
+            break;
+        }
+        //check each column
+        for(int i = 0; i < 4; i++, ptm++,col++){
             if(*ptm == 0){
                 continue;
             }
-            *ptm *= multiplier;
+
+            if(*ptm == 1 && first){
+
+            }
+
+            if(*ptm != 0 && *ptm != 1){
+                first = false;
+                valid = false;
+            }
         }
-        ptm -= 4;
-    }
-    else{
-        cout << "The row input must be between " << "1 and " << numEQ << endl;
-    }
 
-    cout << "Enter the row you want to be added by the multiplied row" << endl;
-    cin >> row1;
 
-    //add the rows together
-    if(row1 <= numEQ && row1 > 0){
-        row1--;
-
-        //set the position of the pointer
-        ptm1 += row1*4;
-
-        for(int i = 0; i < 4; i++, ptm++, ptm1++){
-            *ptm1 += *ptm;
-        }
-    }
-    else{
-        cout << "The row input must be between " << "1 and " << numEQ << endl;
     }
 
 
 
+
+    return valid;
 }
