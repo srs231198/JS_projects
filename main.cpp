@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <cstring>
 
 using namespace std;
 
@@ -38,22 +39,23 @@ int main(){
     double *matrix;
 
     int num_equations = 0;
+
     num_equations = numOfEquations(inputfile);
-    //check for number of players
-    if(num_equations > 4 || num_equations < 2){
-        cout << "Only 2-4 players allowed" << endl;
-        exit(0);
-    }
+//    //check for number of players
+//    if(num_equations > 4 || num_equations < 2){
+//        cout << "Only 2-4 players allowed" << endl;
+//        exit(0);
+//    }
     int sizeOfArray = num_equations*4;
 
     matrix = new double[sizeOfArray]();
 
-    displayMatrix(matrix, num_equations);
+   displayMatrix(matrix, num_equations);
 
     //call the function and store the value of the num of rows in num_equations
     FileInput(matrix, inputfile, num_equations);
 
-    displayMatrix(matrix, num_equations);
+   displayMatrix(matrix, num_equations);
 
     //get the users choice and call the corresponding function
     menu(matrix, num_equations);
@@ -68,141 +70,129 @@ int numOfEquations(fstream &inputfile){
     string player;
     int playerCount = 0;
     inputfile.open("commands.txt", ios :: in);
-    int t = (int)inputfile.tellp();
 
-    while(!inputfile.eof()){
-        getline(inputfile,player);
-        if(player.size() > 0)
+    while(inputfile >> player) {
+        if (!player.empty())
             playerCount++;
     }
-
- //   int t = inputfile.tellp();
-    inputfile.seekp(0, ios::beg);
 
     inputfile.close();
     return playerCount;
 }
 
 void FileInput(double *matrix, fstream &inputfile, int numEQ) {
-    int sign = 1, counter = 0;
-    double var = 0;
-    char ch;
-    double *ptm;
-    ptm = matrix;
-
-    bool valid, until = false;
 
     inputfile.open("commands.txt", ios::in | ios :: binary);
 
+    string equation,variable;
 
-    while(!until) {
+    double *ptm;
 
-        valid = false;
-        until = false;
-        var = 1;
-        //while there are less than 4 cols
-        //the loop will also terminate if we reach a newline or constant
-        while(!valid){
+    ptm = matrix;
+
+    int counter = 0, pos = 0;
+
+    while(inputfile >> equation){
+
+        int sign = 1;
+
+        //get length of string
+        int length = int(equation.length());
+
+        unsigned long i = 0;
 
 
+        while(length > 0){
 
-            //check for the character pointed at by the file pointer
-            // and store it in c
-            int c = inputfile.peek();
+            //update pointer position
+            ptm += counter*4;
 
-           // cout << " hello " << endl;
-            //check for newline
-            if(c == 10){
-                inputfile.seekg(1,ios :: cur);
-                break;
+            variable = "";
+            //check for sign of the variable
+            if(equation.at(i) == '+'){
+                sign = 1;
+                equation = equation.substr(i + 1);
+            }
+            else if(equation.at(i) == '-'){
+                sign = -1;
+                equation = equation.substr(i + 1);
             }
 
-            c = inputfile.peek();
-            //check if the val is a digit
-            if (isdigit(c)) {
-                inputfile >> var;
+            //check for variable
+            if(equation.at(i) == 'x'){
+                variable = equation.substr(0, i);
+                equation = equation.substr(i + 1);
+
+                length = (int)equation.size();
+
+                *ptm = sign;
+
+                i = 0;
+            }
+            else if(equation.at(i) == 'y'){
+
+                //extract the variable from the equation
+                variable = equation.substr(0, i);
+                equation = equation.substr(i + 1);
+
+                length = (int)equation.size();
+
+                ptm++;
+
+                *ptm = sign;
+
+                pos = 1;
+
+                i = 0;
+            }
+            else if(equation.at(i) == 'z'){
+                variable = equation.substr(0, i);
+                equation = equation.substr(i + 1);
+
+                length = (int)equation.size();
+
+                ptm += 2;
+
+                *ptm = sign;
+
+                pos = 2;
+
+                i = 0;
+            }
+            else if(equation.at(i) == '='){
+                variable = equation.substr(i + 1);
+
+                length = 0;
+
+                ptm += 3;
+
+                *ptm = sign;
+
+                pos = 3;
+
+                i = 0;
             }
             else{
-                var = 1;
+                i++;
             }
 
-            //check for operator
-            c = inputfile.peek();
-            //"-" operator
-            if (c == 45) {
-                inputfile.seekg(1, ios::cur);
-                sign = -1;
-            }
-            //"+" operator
-            else if( c == 43) {
-                inputfile.seekg(1, ios::cur);
-                sign = 1;
-            }
-//            //"." operator
-//            else if( c == 46 ){
-//                inputfile.seekg(1, ios::cur);
-//                int ct = 1;
-//                c = inputfile.peek();
-//                //store the double value i.e. 2.34 or something like that
-//                while(isdigit(c)){
-//                    int temp = var;
-//                    inputfile >> var;
-//                    var /= 10*ct;
-//                    ct++;
-//                    var += temp;
-//                }
-//            }
-
-
-
-            //check for character
-            c = inputfile.peek();
-            if (isalpha(c)) {
-
-                inputfile >> ch;
-
-                //check for x
-                if (c == 120) {
-                    *ptm = var * sign;
-                    cout << *ptm << " ";
-
-                }
-                //check for y
-                else if (c == 121) {
-                    ptm++;
-                    *ptm = var * sign;
-                    cout << *ptm << " ";
-                    ptm--;
-                }
-                //check for z
-                else if (c == 122) {
-                    ptm += 2;
-                    *ptm = var * sign;
-                    cout << *ptm << " ";
-                    ptm -= 2;
-                }
-            }
-
-            //check for "=" sign
-            c = inputfile.peek();
-            if(c == 61){
-                inputfile.seekg(1, ios :: cur);
-                inputfile >> var;
-                ptm += 3;
-                *ptm = var;
-                cout << *ptm << endl;
-                ptm += 1;
-                counter++;
-                if(counter == numEQ){
-                    until = true;
-                    valid = true;
-                }
+            if(variable.length() > 0){
+                double n = stod(variable);
+                *ptm = n;
 
             }
 
+            cout << *ptm << " ";
+
+            //set the pointer to the original position
+            ptm = matrix;
         }
 
+        //initialize the counter
+        counter++;
+
     }
+
     inputfile.close();
 }
 
@@ -237,10 +227,8 @@ void menu( double *matrix, int numEQ){
     while(choice != 4) {
 
         //check if the matrix is complete or not
-        if(MatrixComplete(matrix, numEQ)){
-            cout << "The matrix is in reduced echelon form" << endl;
+        if(MatrixComplete(matrix, numEQ))
             break;
-        }
 
         //display the matix to the user
         displayMatrix(matrix, numEQ);
@@ -287,8 +275,10 @@ void switchRows(double *matrix, int numEQ){
     ptm2 = matrix;
 
     //ask the user for the rows they want to switch
-    cout << "Enter the rows that you want to switch: " << endl;
-    cin >> row1 >> row2;
+    cout << "Enter the first row: " << endl;
+    cin >> row1;
+    cout << "Enter the second row: " << endl;
+    cin >> row2;
 
     //check that the input is between 1 and 4 for both rows
     if((row1 <= numEQ && row1 > 0) && (row2 <= numEQ && row2 > 0)){
@@ -431,44 +421,107 @@ void scalarAddition(double *matrix, int numEQ){
 }
 
 bool MatrixComplete(double *matrix, int NumEQ){
-    bool valid = false;
+    bool valid = true;
 
-    bool first = true;
+    bool leading = true;
+
+    double  x=0, y = 0, z = 0;
+
+    bool x_value = false, y_value = false, z_value = false;
 
     double *ptm;
     ptm = matrix;
 
-    int row = 0, col = 0;
+    int n = 0;
 
-    //check for row echelon form
+    int col = 0, lead = 0;
 
-    //check each row...
-    for(int i = 0; i < NumEQ; i++, ptm++){
+    while(n < NumEQ){
+        //if there are 4 equations check the bottom row for all zeroes
+        if(n == 3 && NumEQ == 4){
 
-        if(row == NumEQ){
-            break;
+            ptm = matrix;
+
+            ptm += 12;
+
+            for(int i = 0; i < 4 ; i++,ptm++){
+                if(*ptm == 0){
+                    continue;
+                }
+                else{
+                    return false;
+                }
+            }
         }
-        //check each column
-        for(int i = 0; i < 4; i++, ptm++,col++){
+
+
+        //check for leading 1 in each row, cycling through columns
+        for(col = 0; col < 4; col ++, ptm++){
+
+            //check for zeroes
             if(*ptm == 0){
                 continue;
             }
+            //check for leading 1
+            if(*ptm == 1){
+                //make sure that lead is not bigger than
+                if(lead > col){
+                    valid = false;
+                    leading = false;
+                    break;
+                }
+                //assign values to columns based on specific variables
+                switch(col){
+                    case 0: ptm += 4-col;
+                            x = *ptm;
+                        lead = col;
+                        x_value = true;
+                            break;
 
-            if(*ptm == 1 && first){
+                    case 1: ptm += 4-col;
+                             y = *ptm;
+                        lead = col;
+                        y_value = true;
+                             break;
 
+                    case 2: ptm += 4-col;
+                            z = *ptm;
+                        lead = col;
+                        z_value = true;
+                            break;
+                    case 3: break;
+                    default: valid = false;
+                }
+
+                //break out of the loop if the leading 1 is found
+                break;
             }
 
-            if(*ptm != 0 && *ptm != 1){
-                first = false;
-                valid = false;
-            }
         }
 
+        //if the leading character is not in the proper place then break
+        if(!leading){
+            break;
+        }
 
+        //decrement the number of equations to check
+        n--;
     }
 
+    if(valid){
 
+            cout << "The matrix is in reduced echelon form" << endl;
 
+            if(x_value){
+                cout << "the value of x: " << x << endl;
+            }
+            if(y_value){
+                cout << "the value of y: " << y << endl;
+            }
+            if(z_value){
+                cout << "the value of z: " << z << endl;
+            }
+    }
 
     return valid;
 }
