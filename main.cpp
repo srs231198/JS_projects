@@ -459,7 +459,7 @@ bool MatrixComplete(double *matrix, int NumEQ){
         for(col = 0; col < 4; col ++, ptm++){
 
             //check for zeroes
-            if(*ptm == 0){
+            if(*ptm == 0.0){
                 continue;
             }
             //check for leading 1
@@ -472,20 +472,17 @@ bool MatrixComplete(double *matrix, int NumEQ){
                 }
                 //assign values to columns based on specific variables
                 switch(col){
-                    case 0: ptm += 4-col;
-                            x = *ptm;
+                    case 0:
                         lead = col;
                         x_value = true;
                             break;
 
-                    case 1: ptm += 4-col;
-                             y = *ptm;
+                    case 1:
                         lead = col;
                         y_value = true;
                              break;
 
-                    case 2: ptm += 4-col;
-                            z = *ptm;
+                    case 2:
                         lead = col;
                         z_value = true;
                             break;
@@ -496,6 +493,10 @@ bool MatrixComplete(double *matrix, int NumEQ){
                 //break out of the loop if the leading 1 is found
                 break;
             }
+            else {
+                valid = false;
+                break;
+            }
 
         }
 
@@ -504,21 +505,31 @@ bool MatrixComplete(double *matrix, int NumEQ){
             break;
         }
 
-        //decrement the number of equations to check
-        n--;
+        //increment the number of equations to check
+        n++;
     }
 
     if(valid){
 
             cout << "The matrix is in reduced echelon form" << endl;
 
+            ptm = matrix;
             if(x_value){
+                ptm += 4;
+                x = *ptm;
+                ptm -= 4;
                 cout << "the value of x: " << x << endl;
             }
             if(y_value){
+                ptm += 8;
+                y = *ptm;
+                ptm -= 8;
                 cout << "the value of y: " << y << endl;
             }
             if(z_value){
+                ptm += 12;
+                z = *ptm;
+                ptm -= 12;
                 cout << "the value of z: " << z << endl;
             }
     }
