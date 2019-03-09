@@ -118,6 +118,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
                 equation = equation.substr(i + 1);
             }
 
+
             //check for variable
             if(equation.at(i) == 'x'){
                 variable = equation.substr(0, i);
@@ -166,9 +167,11 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
                 ptm += 3;
 
-                *ptm = sign;
+//                *ptm = sign;
 
                 pos = 3;
+
+                sign = 1;
 
                 i = 0;
             }
@@ -178,7 +181,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
             if(variable.length() > 0){
                 double n = stod(variable);
-                *ptm = n;
+                *ptm = n*sign;
 
             }
 
@@ -186,6 +189,8 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
             //set the pointer to the original position
             ptm = matrix;
+
+//
         }
 
         //initialize the counter
@@ -432,13 +437,14 @@ bool MatrixComplete(double *matrix, int NumEQ){
     double *ptm;
     ptm = matrix;
 
-    int n = 0;
+    int row = 0;
 
     int col = 0, lead = 0;
 
-    while(n < NumEQ){
+    while(row < NumEQ){
+
         //if there are 4 equations check the bottom row for all zeroes
-        if(n == 3 && NumEQ == 4){
+        if(row == 3 && NumEQ == 4){
 
             ptm = matrix;
 
@@ -459,7 +465,7 @@ bool MatrixComplete(double *matrix, int NumEQ){
         for(col = 0; col < 4; col ++, ptm++){
 
             //check for zeroes
-            if(*ptm == 0.0){
+            if(*ptm == 0){
                 continue;
             }
             //check for leading 1
@@ -470,24 +476,52 @@ bool MatrixComplete(double *matrix, int NumEQ){
                     leading = false;
                     break;
                 }
+
+                //check that each column has only the leading 1 in it
+                //assign the pointer to the beginning of the matrix
+                ptm = matrix;
+                //move the pointer to the beginning of the array
+                ptm += row+4;
+                for(int i = 0 ; i < 3; i++){
+                    if(i == col){
+                        continue;
+                    }
+                    else if(*ptm == 0){
+                        continue;
+                    }
+                    else{
+                        valid = false;
+                        break;
+                    }
+                }
+
+                //put matrix back to the original position
+                ptm = matrix;
+                ptm += (row*4 + col);
+
+
                 //assign values to columns based on specific variables
-                switch(col){
-                    case 0:
-                        lead = col;
-                        x_value = true;
+                if(valid) {
+                    switch (col) {
+                        case 0:
+                            lead = col;
+                            x_value = true;
                             break;
 
-                    case 1:
-                        lead = col;
-                        y_value = true;
-                             break;
-
-                    case 2:
-                        lead = col;
-                        z_value = true;
+                        case 1:
+                            lead = col;
+                            y_value = true;
                             break;
-                    case 3: break;
-                    default: valid = false;
+
+                        case 2:
+                            lead = col;
+                            z_value = true;
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            valid = false;
+                    }
                 }
 
                 //break out of the loop if the leading 1 is found
@@ -506,7 +540,7 @@ bool MatrixComplete(double *matrix, int NumEQ){
         }
 
         //increment the number of equations to check
-        n++;
+        row++;
     }
 
     if(valid){
