@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 //a function to count the number of equations;
 int numOfEquations(fstream &);
 
@@ -381,6 +380,7 @@ void scalarAddition(double *matrix, int numEQ){
     cin >> row;
 
 
+    //make sure that the row is within range
     if(row <= numEQ && row > 0) {
 
         //get the value of the multiplier
@@ -402,8 +402,16 @@ void scalarAddition(double *matrix, int numEQ){
         cout << "Enter the row you want to be added by the multiplied row" << endl;
         cin >> row1;
 
+        //make sure that the row is not in the reduced form
         if(rowChecker(matrix, row1)){
             cout << "you can't use scalar multiplication with this row" << endl;
+            return;
+        }
+
+        //make sure that the rows aren't added to themselves
+        if(row == row1)
+        {
+            cout << "Can't add the scalar multiple of the row to itself!" << endl;
             return;
         }
 
@@ -416,11 +424,15 @@ void scalarAddition(double *matrix, int numEQ){
 
             for(int i = 0; i < 4; i++, ptm++, ptm1++){
 
+                //if the val is zero then all the multiplications will be 0
                 if(*ptm == 0){
                     continue;
                 }
+                //multiply the first row by the multiplier
                 *ptm *= multiplier;
+                //add the second row with the first row
                 *ptm1 += *ptm;
+                //divide the first row with the multiplier
                 *ptm /= multiplier;
 
             }
@@ -448,6 +460,9 @@ bool rowChecker(double *matrix, int row){
     //counters to keep track of the number of 0's and 1's in the row
     double zero_counter = 0, one_counter = 0;
 
+    row--;
+    ptm += row*4;
+
     for(int col = 0; col < 3; col++, ptm++){
         //if the value is 0 continue the loop
         if(*ptm == 0){
@@ -470,6 +485,13 @@ bool rowChecker(double *matrix, int row){
             complete = false;
             break;
         }
+    }
+
+    if(zero_counter == 2 && one_counter == 1){
+        complete = true;
+    }
+    else{
+        complete = false;
     }
 
     return complete;
@@ -497,20 +519,23 @@ bool MatrixComplete(double *matrix, int NumEQ) {
         //check for the last row if the number of equations is 4 (To be done later)
         //if there are 4 equations check the bottom row for all zeroes
         if(row == 3){
-
+            //start at the beginning of the matrix
             ptm = matrix;
-
+            //go to the last row
             ptm += 12;
-
+            //for all the columns
             for(int i = 0; i < 4 ; i++,ptm++){
+                //check if the val at the position is a zero
                 if(*ptm == 0){
                     continue;
                 }
+                //if its not then set complete to false and return complete
                 else{
                     complete = false;
-                    break;
+                    return complete;
                 }
             }
+
         }
 
         //assign the matrix to the next row
@@ -556,47 +581,48 @@ bool MatrixComplete(double *matrix, int NumEQ) {
             break;
         }
 
+        //if there are 2 0's and a 1 then proceed...
         if(one_counter == 1 && zero_counter == 2){
             //assign values to columns based on specific variables
+            ptm = matrix;
             switch(lead){
+                //for x
                 case 0:
                     x_value = true;
+                    ptm += row*4 + 3;
+                    x = *ptm;
                     break;
-
+                //for y
                 case 1:
                     y_value = true;
+                    ptm += row*4 + 3;
+                    y = *ptm;
                     break;
-
+                //for z
                 case 2:
                     z_value = true;
+                    ptm += row*4 + 3;
+                    z = *ptm;
                     break;
+
                 default: complete = false;
             }
         }
 
     }
 
+    //if the matrix is in the complete form then find out the values of the appropriate variables
     if(complete){
 
         cout << "The matrix is in reduced echelon form" << endl;
 
-        ptm = matrix;
         if(x_value){
-            ptm += 3;
-            x = *ptm;
-            ptm -= 3;
             cout << "the value of x: " << x << endl;
         }
         if(y_value){
-            ptm += 7;
-            y = *ptm;
-            ptm -= 7;
             cout << "the value of y: " << y << endl;
         }
         if(z_value){
-            ptm += 11;
-            z = *ptm;
-            ptm -= 11;
             cout << "the value of z: " << z << endl;
         }
     }
