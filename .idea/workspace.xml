@@ -38,13 +38,13 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cpp" value="13158" />
+          <entry key="cpp" value="13231" />
           <entry key="txt" value="293" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="ObjectiveC" value="13158" />
+          <entry key="ObjectiveC" value="13231" />
           <entry key="PLAIN_TEXT" value="293" />
         </counts>
       </usages-collector>
@@ -69,8 +69,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="493" column="30" selection-start-line="493" selection-start-column="30" selection-end-line="493" selection-end-column="30" />
+            <state relative-caret-position="580">
+              <caret line="468" column="25" selection-start-line="468" selection-start-column="25" selection-end-line="468" selection-end-column="25" />
               <folding>
                 <element signature="e#31#50#0" expanded="true" />
               </folding>
@@ -113,8 +113,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/cmake-build-debug/paint.txt" />
-        <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/cmake-build-debug/commands.txt" />
+        <option value="$PROJECT_DIR$/main.cpp" />
       </list>
     </option>
   </component>
@@ -204,12 +204,12 @@
       <workItem from="1550945275585" duration="7110000" />
       <workItem from="1551197515744" duration="3274000" />
       <workItem from="1551245305483" duration="1703000" />
-      <workItem from="1551502882987" duration="53544000" />
+      <workItem from="1551502882987" duration="53840000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135444000" />
+    <option name="totallyTimeSpent" value="135740000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -225,7 +225,7 @@
       <window_info anchor="bottom" id="Messages" order="4" weight="0.32650602" />
       <window_info anchor="bottom" id="Message" order="5" />
       <window_info anchor="bottom" id="Find" order="6" />
-      <window_info active="true" anchor="bottom" id="Run" order="7" visible="true" weight="0.49879518" />
+      <window_info anchor="bottom" id="Run" order="7" weight="0.49879518" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
@@ -290,7 +290,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.cpp</url>
-          <line>545</line>
+          <line>549</line>
           <option name="timeStamp" value="100" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -300,7 +300,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.cpp</url>
-          <line>504</line>
+          <line>508</line>
           <option name="timeStamp" value="102" />
         </line-breakpoint>
       </breakpoints>
@@ -368,8 +368,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="493" column="30" selection-start-line="493" selection-start-column="30" selection-end-line="493" selection-end-column="30" />
+        <state relative-caret-position="580">
+          <caret line="468" column="25" selection-start-line="468" selection-start-column="25" selection-end-line="468" selection-end-column="25" />
           <folding>
             <element signature="e#31#50#0" expanded="true" />
           </folding>

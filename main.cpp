@@ -464,6 +464,10 @@ bool MatrixComplete(double *matrix, int NumEQ){
         //check for leading 1 in each row, cycling through columns
         for(col = 0; col < 4; col ++, ptm++){
 
+            //check for the 4th column
+            if(col == 3){
+                continue;
+            }
             //check for zeroes
             if(*ptm == 0){
                 continue;
@@ -477,31 +481,31 @@ bool MatrixComplete(double *matrix, int NumEQ){
                     break;
                 }
 
-                //check that each column has only the leading 1 in it
-                //assign the pointer to the beginning of the matrix
-                ptm = matrix;
-                //move the pointer to the beginning of the array
-                ptm += row+4;
-                for(int i = 0 ; i < 3; i++){
-                    if(i == col){
-                        continue;
-                    }
-                    else if(*ptm == 0){
-                        continue;
-                    }
-                    else{
-                        valid = false;
-                        break;
-                    }
-                }
-
-                //put matrix back to the original position
-                ptm = matrix;
-                ptm += (row*4 + col);
+//                //check that each column has only the leading 1 in it
+//                //assign the pointer to the beginning of the matrix
+//                ptm = matrix;
+//                //move the pointer to the beginning of the array
+//                ptm += row+4;
+//                for(int i = 0 ; i < 3; i++){
+//                    if(i == col){
+//                        continue;
+//                    }
+//                    else if(*ptm == 0){
+//                        continue;
+//                    }
+//                    else{
+//                        valid = false;
+//                        break;
+//                    }
+//                }
+//
+//                //put matrix back to the original position
+//                ptm = matrix;
+//                ptm += (row*4 + col);
 
 
                 //assign values to columns based on specific variables
-                if(valid) {
+
                     switch (col) {
                         case 0:
                             lead = col;
@@ -517,12 +521,10 @@ bool MatrixComplete(double *matrix, int NumEQ){
                             lead = col;
                             z_value = true;
                             break;
-                        case 3:
-                            break;
                         default:
                             valid = false;
                     }
-                }
+
 
                 //break out of the loop if the leading 1 is found
                 break;
