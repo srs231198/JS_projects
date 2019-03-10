@@ -1,4 +1,4 @@
-//Shreyas Raj Singh sxs170100
+//Shreyas Raj Singh sxs170100 CS 1337.007 Project 2
 
 #include <iostream>
 #include <fstream>
@@ -12,7 +12,7 @@ using namespace std;
 int numOfEquations(fstream &);
 
 //a function to get the input from matrix.txt
-void FileInput(double *, fstream &, int );
+void FileInput(double *, fstream &);
 
 //a function to display the matrix
 void displayMatrix(double *, int numEQ);
@@ -43,21 +43,17 @@ int main(){
     int num_equations = 0;
 
     num_equations = numOfEquations(inputfile);
-//    //check for number of players
-//    if(num_equations > 4 || num_equations < 2){
-//        cout << "Only 2-4 players allowed" << endl;
-//        exit(0);
-//    }
+    //check for number of players
+    if(num_equations > 4 || num_equations < 2){
+        cout << "Only 2-4 players allowed" << endl;
+        exit(0);
+    }
     int sizeOfArray = num_equations*4;
 
     matrix = new double[sizeOfArray]();
 
-   displayMatrix(matrix, num_equations);
-
     //call the function and store the value of the num of rows in num_equations
-    FileInput(matrix, inputfile, num_equations);
-
-   displayMatrix(matrix, num_equations);
+    FileInput(matrix, inputfile);
 
     //get the users choice and call the corresponding function
     menu(matrix, num_equations);
@@ -65,6 +61,8 @@ int main(){
     delete [] matrix;
 
     inputfile.close();
+
+    return 0;
 }
 
 
@@ -82,7 +80,7 @@ int numOfEquations(fstream &inputfile){
     return playerCount;
 }
 
-void FileInput(double *matrix, fstream &inputfile, int numEQ) {
+void FileInput(double *matrix, fstream &inputfile) {
 
     inputfile.open("commands.txt", ios::in | ios :: binary);
 
@@ -92,7 +90,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
     ptm = matrix;
 
-    int counter = 0, pos = 0;
+    int counter = 0;
 
     while(inputfile >> equation){
 
@@ -144,8 +142,6 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
                 *ptm = sign;
 
-                pos = 1;
-
                 i = 0;
             }
             else if(equation.at(i) == 'z'){
@@ -158,8 +154,6 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
                 *ptm = sign;
 
-                pos = 2;
-
                 i = 0;
             }
             else if(equation.at(i) == '='){
@@ -168,10 +162,6 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
                 length = 0;
 
                 ptm += 3;
-
-//                *ptm = sign;
-
-                pos = 3;
 
                 sign = 1;
 
@@ -192,7 +182,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
             //set the pointer to the original position
             ptm = matrix;
 
-//
+
         }
 
         //initialize the counter
@@ -212,7 +202,7 @@ void displayMatrix(double *matrix, int numEQ){
 
     //loop till the end of the array
     for(int i = 0; i < length; i++){
-        cout << setw(2) << fixed << setprecision(2) << *ptm << " ";
+        cout << setw(4) << fixed << setprecision(2) << *ptm << " ";
         ptm++;
         counter++;
         //when 4 values are outputted then print a newline
@@ -225,10 +215,8 @@ void displayMatrix(double *matrix, int numEQ){
 }
 
 void menu( double *matrix, int numEQ){
-
-    double *ptm ;
+    //declare a variable to store the user's choice
     int choice = 0;
-    ptm = matrix;
 
     //while choice is not quit aka 4
     while(choice != 4) {
@@ -379,7 +367,6 @@ void scalarAddition(double *matrix, int numEQ){
     cout << "Enter the row you want multiplied" << endl;
     cin >> row;
 
-
     //make sure that the row is within range
     if(row <= numEQ && row > 0) {
 
@@ -408,16 +395,16 @@ void scalarAddition(double *matrix, int numEQ){
             return;
         }
 
-        //make sure that the rows aren't added to themselves
-        if(row == row1)
-        {
-            cout << "Can't add the scalar multiple of the row to itself!" << endl;
-            return;
-        }
-
         //add the rows together
         if(row1 <= numEQ && row1 > 0){
             row1--;
+
+            //make sure that the rows aren't added to themselves
+            if(row == row1)
+            {
+                cout << "Can't add the scalar multiple of the row to itself!" << endl;
+                return;
+            }
 
             //set the position of the pointer
             ptm1 += row1*4;
@@ -455,11 +442,12 @@ bool rowChecker(double *matrix, int row){
     double *ptm;
     ptm = matrix;
 
-    bool complete = true;
+    bool complete;
 
     //counters to keep track of the number of 0's and 1's in the row
     double zero_counter = 0, one_counter = 0;
 
+    //put the pointer at the start of the appropriate row
     row--;
     ptm += row*4;
 
@@ -476,18 +464,18 @@ bool rowChecker(double *matrix, int row){
             //check if the 1 is being called twice
             if(one_counter > 1){
                 //since there are two 1's in the row
-                complete = false;
+                // set complete = false;
                 break;
             }
         }
             //if the value is not 1 or 0 then set complete to false;
         else{
-            complete = false;
+            // set complete = false;
             break;
         }
     }
 
-    if(zero_counter == 2 && one_counter == 1){
+    if(one_counter == 1 && zero_counter == 2){
         complete = true;
     }
     else{
@@ -501,7 +489,7 @@ bool MatrixComplete(double *matrix, int NumEQ) {
 
     //complete is to check for the entire matrix
     //valid is to check the row
-    bool complete = true, valid = false;
+    bool complete = true;
 
     bool x_value = false, y_value = false, z_value = false;
 
