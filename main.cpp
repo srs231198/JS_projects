@@ -42,14 +42,27 @@ int main(){
 
     int num_equations = 0;
 
+    inputfile.open("matrix.txt", ios :: in);
+
+    //check the file for invalid input
+    if(!inputfile.good()){
+        cout << "The file didn't open successfully" << endl;
+        exit(0);
+    }
+
+    inputfile.close();
+
+    //get the number of equations
     num_equations = numOfEquations(inputfile);
     //check for number of players
     if(num_equations > 4 || num_equations < 2){
         cout << "Only 2-4 players allowed" << endl;
         exit(0);
     }
+    //get the size of array
     int sizeOfArray = num_equations*4;
 
+    //initialize the array
     matrix = new double[sizeOfArray]();
 
     //call the function and store the value of the num of rows in num_equations
@@ -58,8 +71,10 @@ int main(){
     //get the users choice and call the corresponding function
     menu(matrix, num_equations);
 
+    //delete the matrix when done
     delete [] matrix;
 
+    //close input file
     inputfile.close();
 
     return 0;
@@ -68,21 +83,28 @@ int main(){
 
 int numOfEquations(fstream &inputfile){
     string player;
+    //initialize the player count
     int playerCount = 0;
-    inputfile.open("commands.txt", ios :: in);
 
+    inputfile.open("matrix.txt", ios :: in);
+
+    //while the file takes in input
     while(inputfile >> player) {
-        if (!player.empty())
+        //and the string is not empty
+        if (!player.empty()) {
+            //increment player count
             playerCount++;
+        }
     }
-
+    //close the input file
     inputfile.close();
+    //return the number of equations
     return playerCount;
 }
 
 void FileInput(double *matrix, fstream &inputfile) {
 
-    inputfile.open("commands.txt", ios::in | ios :: binary);
+    inputfile.open("matrix.txt", ios::in | ios :: binary);
 
     string equation,variable;
 
@@ -177,14 +199,9 @@ void FileInput(double *matrix, fstream &inputfile) {
 
             }
 
-            cout << *ptm << " ";
-
             //set the pointer to the original position
             ptm = matrix;
-
-
         }
-
         //initialize the counter
         counter++;
 
@@ -453,12 +470,21 @@ bool rowChecker(double *matrix, int row){
 
     for(int col = 0; col < 3; col++, ptm++){
         //if the value is 0 continue the loop
-        if(*ptm == 0){
+        if(*ptm == 0.0){
             zero_counter++;
+            //if the first 3 columns are zero then check that the last column is zero or not
+            if(zero_counter == 3){
+                //set pointer to the next column
+                ptm = matrix;
+                ptm += row*4 + 3;
+                if(*ptm == 0.0){
+                    zero_counter++;
+                }
+            }
             continue;
         }
-            //if its one then...
-        else if(*ptm == 1){
+        //if its one then...
+        else if(*ptm == 1.0){
             one_counter++;
 
             //check if the 1 is being called twice
@@ -468,14 +494,18 @@ bool rowChecker(double *matrix, int row){
                 break;
             }
         }
-            //if the value is not 1 or 0 then set complete to false;
+        //if the value is not 1 or 0 then set complete to false;
         else{
             // set complete = false;
             break;
         }
+
     }
 
-    if(one_counter == 1 && zero_counter == 2){
+    if((one_counter == 1 && zero_counter == 2)){
+        complete = true;
+    }
+    else if(zero_counter == 4){
         complete = true;
     }
     else{
@@ -494,6 +524,9 @@ bool MatrixComplete(double *matrix, int NumEQ) {
     bool x_value = false, y_value = false, z_value = false;
 
     double *ptm;
+
+    //have a counter to keep track of the
+    int counter = 0;
 
     int lead = 0;
 
@@ -514,7 +547,7 @@ bool MatrixComplete(double *matrix, int NumEQ) {
             //for all the columns
             for(int i = 0; i < 4 ; i++,ptm++){
                 //check if the val at the position is a zero
-                if(*ptm == 0){
+                if(*ptm == 0.0){
                     continue;
                 }
                 //if its not then set complete to false and return complete
@@ -532,12 +565,12 @@ bool MatrixComplete(double *matrix, int NumEQ) {
 
         for(int col = 0; col < 3; col++, ptm++){
             //if the value is 0 continue the loop
-            if(*ptm == 0){
+            if(*ptm == 0.0){
                 zero_counter++;
                 continue;
             }
             //if its one then...
-            else if(*ptm == 1){
+            else if(*ptm == 1.00){
                 one_counter++;
                 //check if the leading one is to the right of the previous one
                 if(lead >= col && row != 0){
@@ -579,24 +612,47 @@ bool MatrixComplete(double *matrix, int NumEQ) {
                     x_value = true;
                     ptm += row*4 + 3;
                     x = *ptm;
+                    counter++;
                     break;
                 //for y
                 case 1:
                     y_value = true;
                     ptm += row*4 + 3;
                     y = *ptm;
+                    counter++;
                     break;
                 //for z
                 case 2:
                     z_value = true;
                     ptm += row*4 + 3;
                     z = *ptm;
+                    counter++;
                     break;
 
                 default: complete = false;
             }
         }
 
+    }
+
+    //make sure that the number of equations is equal to the number of variable solved
+    //for a system of equations not equal to 4
+    if(NumEQ < 4){
+        //if the varibles solved is not equal to the number of eqautions
+        if(counter != NumEQ){
+            //set complete to false
+            complete = false;
+        }
+    }
+    //and for a system of 4 equations
+    else if(NumEQ == 4){
+        //increment the counter
+        counter++;
+        //if the counter is not equal to 4 then ...
+        if(counter != NumEQ){
+            //set complete to false
+            complete = false;
+        }
     }
 
     //if the matrix is in the complete form then find out the values of the appropriate variables
