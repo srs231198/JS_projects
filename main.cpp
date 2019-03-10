@@ -1,4 +1,4 @@
-//Shreyas Raj Singh sxs170100
+//Shreyas Raj Singh sxs170100 CS 1337.007 Project 2
 
 #include <iostream>
 #include <fstream>
@@ -8,12 +8,11 @@
 
 using namespace std;
 
-
 //a function to count the number of equations;
 int numOfEquations(fstream &);
 
 //a function to get the input from matrix.txt
-void FileInput(double *, fstream &, int );
+void FileInput(double *, fstream &);
 
 //a function to display the matrix
 void displayMatrix(double *, int numEQ);
@@ -33,6 +32,9 @@ void scalarAddition(double *, int);
 //a function to check for the reduced echelon form
 bool MatrixComplete(double *, int);
 
+//a function to check if the row is in the proper format or not
+bool rowChecker(double *, int);
+
 int main(){
 
     fstream inputfile;
@@ -40,49 +42,69 @@ int main(){
 
     int num_equations = 0;
 
+    inputfile.open("matrix.txt", ios :: in);
+
+    //check the file for invalid input
+    if(!inputfile.good()){
+        cout << "The file didn't open successfully" << endl;
+        exit(0);
+    }
+
+    inputfile.close();
+
+    //get the number of equations
     num_equations = numOfEquations(inputfile);
-//    //check for number of players
-//    if(num_equations > 4 || num_equations < 2){
-//        cout << "Only 2-4 players allowed" << endl;
-//        exit(0);
-//    }
+    //check for number of players
+    if(num_equations > 4 || num_equations < 2){
+        cout << "Only 2-4 players allowed" << endl;
+        exit(0);
+    }
+    //get the size of array
     int sizeOfArray = num_equations*4;
 
+    //initialize the array
     matrix = new double[sizeOfArray]();
 
-   displayMatrix(matrix, num_equations);
-
     //call the function and store the value of the num of rows in num_equations
-    FileInput(matrix, inputfile, num_equations);
-
-   displayMatrix(matrix, num_equations);
+    FileInput(matrix, inputfile);
 
     //get the users choice and call the corresponding function
     menu(matrix, num_equations);
 
+    //delete the matrix when done
     delete [] matrix;
 
+    //close input file
     inputfile.close();
+
+    return 0;
 }
 
 
 int numOfEquations(fstream &inputfile){
     string player;
+    //initialize the player count
     int playerCount = 0;
-    inputfile.open("commands.txt", ios :: in);
 
+    inputfile.open("matrix.txt", ios :: in);
+
+    //while the file takes in input
     while(inputfile >> player) {
-        if (!player.empty())
+        //and the string is not empty
+        if (!player.empty()) {
+            //increment player count
             playerCount++;
+        }
     }
-
+    //close the input file
     inputfile.close();
+    //return the number of equations
     return playerCount;
 }
 
-void FileInput(double *matrix, fstream &inputfile, int numEQ) {
+void FileInput(double *matrix, fstream &inputfile) {
 
-    inputfile.open("commands.txt", ios::in | ios :: binary);
+    inputfile.open("matrix.txt", ios::in | ios :: binary);
 
     string equation,variable;
 
@@ -90,7 +112,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
     ptm = matrix;
 
-    int counter = 0, pos = 0;
+    int counter = 0;
 
     while(inputfile >> equation){
 
@@ -118,6 +140,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
                 equation = equation.substr(i + 1);
             }
 
+
             //check for variable
             if(equation.at(i) == 'x'){
                 variable = equation.substr(0, i);
@@ -141,8 +164,6 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
                 *ptm = sign;
 
-                pos = 1;
-
                 i = 0;
             }
             else if(equation.at(i) == 'z'){
@@ -155,8 +176,6 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
                 *ptm = sign;
 
-                pos = 2;
-
                 i = 0;
             }
             else if(equation.at(i) == '='){
@@ -166,9 +185,7 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
                 ptm += 3;
 
-                *ptm = sign;
-
-                pos = 3;
+                sign = 1;
 
                 i = 0;
             }
@@ -178,16 +195,13 @@ void FileInput(double *matrix, fstream &inputfile, int numEQ) {
 
             if(variable.length() > 0){
                 double n = stod(variable);
-                *ptm = n;
+                *ptm = n*sign;
 
             }
-
-            cout << *ptm << " ";
 
             //set the pointer to the original position
             ptm = matrix;
         }
-
         //initialize the counter
         counter++;
 
@@ -205,7 +219,7 @@ void displayMatrix(double *matrix, int numEQ){
 
     //loop till the end of the array
     for(int i = 0; i < length; i++){
-        cout << setw(2) << *ptm << " ";
+        cout << setw(4) << fixed << setprecision(2) << *ptm << " ";
         ptm++;
         counter++;
         //when 4 values are outputted then print a newline
@@ -218,10 +232,8 @@ void displayMatrix(double *matrix, int numEQ){
 }
 
 void menu( double *matrix, int numEQ){
-
-    double *ptm ;
+    //declare a variable to store the user's choice
     int choice = 0;
-    ptm = matrix;
 
     //while choice is not quit aka 4
     while(choice != 4) {
@@ -319,6 +331,11 @@ void multiplier(double *matrix, int numEQ){
     cout << "Enter the row you want multiplied" << endl;
     cin >> row;
 
+    if(rowChecker(matrix, row)){
+        cout << "you can't use multiplication with this row" << endl;
+        return;
+    }
+
     if(row <= numEQ && row > 0) {
 
         //get the value of the multiplier
@@ -367,6 +384,7 @@ void scalarAddition(double *matrix, int numEQ){
     cout << "Enter the row you want multiplied" << endl;
     cin >> row;
 
+    //make sure that the row is within range
     if(row <= numEQ && row > 0) {
 
         //get the value of the multiplier
@@ -388,20 +406,37 @@ void scalarAddition(double *matrix, int numEQ){
         cout << "Enter the row you want to be added by the multiplied row" << endl;
         cin >> row1;
 
+        //make sure that the row is not in the reduced form
+        if(rowChecker(matrix, row1)){
+            cout << "you can't use scalar multiplication with this row" << endl;
+            return;
+        }
+
         //add the rows together
         if(row1 <= numEQ && row1 > 0){
             row1--;
+
+            //make sure that the rows aren't added to themselves
+            if(row == row1)
+            {
+                cout << "Can't add the scalar multiple of the row to itself!" << endl;
+                return;
+            }
 
             //set the position of the pointer
             ptm1 += row1*4;
 
             for(int i = 0; i < 4; i++, ptm++, ptm1++){
 
+                //if the val is zero then all the multiplications will be 0
                 if(*ptm == 0){
                     continue;
                 }
+                //multiply the first row by the multiplier
                 *ptm *= multiplier;
+                //add the second row with the first row
                 *ptm1 += *ptm;
+                //divide the first row with the multiplier
                 *ptm /= multiplier;
 
             }
@@ -420,119 +455,221 @@ void scalarAddition(double *matrix, int numEQ){
 
 }
 
-bool MatrixComplete(double *matrix, int NumEQ){
-    bool valid = true;
+bool rowChecker(double *matrix, int row){
+    double *ptm;
+    ptm = matrix;
 
-    bool leading = true;
+    bool complete;
 
-    double  x=0, y = 0, z = 0;
+    //counters to keep track of the number of 0's and 1's in the row
+    double zero_counter = 0, one_counter = 0;
+
+    //put the pointer at the start of the appropriate row
+    row--;
+    ptm += row*4;
+
+    for(int col = 0; col < 3; col++, ptm++){
+        //if the value is 0 continue the loop
+        if(*ptm == 0.0){
+            zero_counter++;
+            //if the first 3 columns are zero then check that the last column is zero or not
+            if(zero_counter == 3){
+                //set pointer to the next column
+                ptm = matrix;
+                ptm += row*4 + 3;
+                if(*ptm == 0.0){
+                    zero_counter++;
+                }
+            }
+            continue;
+        }
+        //if its one then...
+        else if(*ptm == 1.0){
+            one_counter++;
+
+            //check if the 1 is being called twice
+            if(one_counter > 1){
+                //since there are two 1's in the row
+                // set complete = false;
+                break;
+            }
+        }
+        //if the value is not 1 or 0 then set complete to false;
+        else{
+            // set complete = false;
+            break;
+        }
+
+    }
+
+    if((one_counter == 1 && zero_counter == 2)){
+        complete = true;
+    }
+    else if(zero_counter == 4){
+        complete = true;
+    }
+    else{
+        complete = false;
+    }
+
+    return complete;
+}
+
+bool MatrixComplete(double *matrix, int NumEQ) {
+
+    //complete is to check for the entire matrix
+    //valid is to check the row
+    bool complete = true;
 
     bool x_value = false, y_value = false, z_value = false;
 
     double *ptm;
-    ptm = matrix;
 
-    int n = 0;
+    //have a counter to keep track of the
+    int counter = 0;
 
-    int col = 0, lead = 0;
+    int lead = 0;
 
-    while(n < NumEQ){
+    double  x=0, y = 0, z = 0;
+
+    //loop through rows and columns
+    for(int row = 0; row < NumEQ; row++){
+
+        //counters to keep track of the number of 0's and 1's in the row
+        double zero_counter = 0, one_counter = 0;
+        //check for the last row if the number of equations is 4 (To be done later)
         //if there are 4 equations check the bottom row for all zeroes
-        if(n == 3 && NumEQ == 4){
-
+        if(row == 3){
+            //start at the beginning of the matrix
             ptm = matrix;
-
+            //go to the last row
             ptm += 12;
-
+            //for all the columns
             for(int i = 0; i < 4 ; i++,ptm++){
-                if(*ptm == 0){
+                //check if the val at the position is a zero
+                if(*ptm == 0.0){
                     continue;
                 }
+                //if its not then set complete to false and return complete
                 else{
-                    return false;
+                    complete = false;
+                    return complete;
                 }
             }
+
         }
 
+        //assign the matrix to the next row
+        ptm = matrix;
+        ptm += row*4;
 
-        //check for leading 1 in each row, cycling through columns
-        for(col = 0; col < 4; col ++, ptm++){
-
-            //check for zeroes
+        for(int col = 0; col < 3; col++, ptm++){
+            //if the value is 0 continue the loop
             if(*ptm == 0.0){
+                zero_counter++;
                 continue;
             }
-            //check for leading 1
-            if(*ptm == 1){
-                //make sure that lead is not bigger than
-                if(lead > col){
-                    valid = false;
-                    leading = false;
+            //if its one then...
+            else if(*ptm == 1.00){
+                one_counter++;
+                //check if the leading one is to the right of the previous one
+                if(lead >= col && row != 0){
+                    complete = false;
                     break;
                 }
-                //assign values to columns based on specific variables
-                switch(col){
-                    case 0:
-                        lead = col;
-                        x_value = true;
-                            break;
 
-                    case 1:
-                        lead = col;
-                        y_value = true;
-                             break;
-
-                    case 2:
-                        lead = col;
-                        z_value = true;
-                            break;
-                    case 3: break;
-                    default: valid = false;
+                //check if the 1 is being called twice
+                if(one_counter > 1){
+                    //since there are two 1's in the row
+                    complete = false;
+                    break;
                 }
 
-                //break out of the loop if the leading 1 is found
-                break;
-            }
-            else {
-                valid = false;
-                break;
-            }
+                //assign the lead a new value
+                lead = col;
 
+
+            }
+            //if the value is not 1 or 0 then set complete to false;
+            else{
+                complete = false;
+                break;
+            }
         }
 
-        //if the leading character is not in the proper place then break
-        if(!leading){
+        //break out of the loop if not a complete matrix
+        if(!complete){
             break;
         }
 
-        //increment the number of equations to check
-        n++;
-    }
-
-    if(valid){
-
-            cout << "The matrix is in reduced echelon form" << endl;
-
+        //if there are 2 0's and a 1 then proceed...
+        if(one_counter == 1 && zero_counter == 2){
+            //assign values to columns based on specific variables
             ptm = matrix;
-            if(x_value){
-                ptm += 4;
-                x = *ptm;
-                ptm -= 4;
-                cout << "the value of x: " << x << endl;
+            switch(lead){
+                //for x
+                case 0:
+                    x_value = true;
+                    ptm += row*4 + 3;
+                    x = *ptm;
+                    counter++;
+                    break;
+                //for y
+                case 1:
+                    y_value = true;
+                    ptm += row*4 + 3;
+                    y = *ptm;
+                    counter++;
+                    break;
+                //for z
+                case 2:
+                    z_value = true;
+                    ptm += row*4 + 3;
+                    z = *ptm;
+                    counter++;
+                    break;
+
+                default: complete = false;
             }
-            if(y_value){
-                ptm += 8;
-                y = *ptm;
-                ptm -= 8;
-                cout << "the value of y: " << y << endl;
-            }
-            if(z_value){
-                ptm += 12;
-                z = *ptm;
-                ptm -= 12;
-                cout << "the value of z: " << z << endl;
-            }
+        }
+
     }
 
-    return valid;
+    //make sure that the number of equations is equal to the number of variable solved
+    //for a system of equations not equal to 4
+    if(NumEQ < 4){
+        //if the varibles solved is not equal to the number of eqautions
+        if(counter != NumEQ){
+            //set complete to false
+            complete = false;
+        }
+    }
+    //and for a system of 4 equations
+    else if(NumEQ == 4){
+        //increment the counter
+        counter++;
+        //if the counter is not equal to 4 then ...
+        if(counter != NumEQ){
+            //set complete to false
+            complete = false;
+        }
+    }
+
+    //if the matrix is in the complete form then find out the values of the appropriate variables
+    if(complete){
+
+        cout << "The matrix is in reduced echelon form" << endl;
+
+        if(x_value){
+            cout << "the value of x: " << x << endl;
+        }
+        if(y_value){
+            cout << "the value of y: " << y << endl;
+        }
+        if(z_value){
+            cout << "the value of z: " << z << endl;
+        }
+    }
+
+    return complete;
 }
